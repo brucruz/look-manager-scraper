@@ -1,3 +1,4 @@
-import oqvestirScraper from "./oqvestir";
+import oqvestir from "./oqvestir";
+import shop2gether from "./shop2gether";
 
-export { oqvestirScraper };
+export default { oqvestir, shop2gether };

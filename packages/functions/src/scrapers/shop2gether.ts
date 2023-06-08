@@ -11,7 +11,7 @@ export default async function fetchProduct(
   domain: string,
   domainWithoutWWW: string
 ) {
-  console.log("fetching product from oqvestir");
+  console.log("fetching product from shop2gether");
 
   // test if url is valid
   try {
@@ -52,16 +52,13 @@ export default async function fetchProduct(
 
     const productDiv = $(".product-essential");
 
-    const name = productDiv.find(".produt-title--name").text().trim();
-    const sku = productDiv.find(".product--sku").text().trim();
-    const brand = productDiv.find(".produt-title--brand a").text().trim();
-
-    const descriptionText = productDiv.find(".descPrincipal .panel-body p");
-
-    // replace breaks with new lines (\n)
-    descriptionText.find("br").replaceWith("\n");
-
-    const description = descriptionText.text().trim();
+    const name = productDiv.find(".product-name span.h1").text().trim();
+    const sku = productDiv.find(".product-name p.new-sku-style").text().trim();
+    const brand = productDiv.find(".product-brand a").text().trim();
+    const description = productDiv
+      .find(".new-product-tabs-desc-content")
+      .text()
+      .trim();
 
     const regularPrice = productDiv.find(".regular-price span.price");
 
@@ -75,27 +72,19 @@ export default async function fetchProduct(
       price = getNumber(regularPrice.text().trim());
     } else {
       old_price = getNumber(
-        productDiv.find(".product-price span.price[id^=old]").text().trim()
+        productDiv.find(".old-price span.price").text().trim()
       );
       price = getNumber(
-        productDiv.find(".product-price span.price[id^=product]").text().trim()
+        productDiv.find(".special-price span.price").text().trim()
       );
     }
 
     const installment_quantity = parseInt(
-      productDiv
-        .find(".product-price .product-installment")
-        .text()
-        .trim()
-        .split("x de ")[0]
+      productDiv.find(".product-installment").text().trim().split("x de ")[0]
     );
 
     const installment_value = getNumber(
-      productDiv
-        .find(".product-price .product-installment")
-        .text()
-        .trim()
-        .split("x de ")[1]
+      productDiv.find(".product-installment").text().trim().split("x ")[1]
     );
 
     const available = productDiv.find(".availability").attr("class")
@@ -106,7 +95,7 @@ export default async function fetchProduct(
       : false;
 
     const images = productDiv
-      .find(".slick-cloned img")
+      .find(".product-image-gallery img")
       .map(function () {
         return $(this).attr("src");
       })
@@ -146,7 +135,7 @@ export default async function fetchProduct(
       installment_quantity,
       available,
       url,
-      store: "OQVestir",
+      store: "Shop2gether",
       store_url: domainWithoutWWW,
       images,
       sizes,

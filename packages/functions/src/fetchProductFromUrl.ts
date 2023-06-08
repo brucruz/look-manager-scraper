@@ -1,7 +1,7 @@
-import { oqvestirScraper } from "./scrapers";
+import scraper from "./scrapers";
 import { ProductInsertion } from "./types/ProductInsertion";
 
-export const supportedDomains = ["oqvestir.com.br"];
+export const supportedDomains = ["oqvestir.com.br", "shop2gether.com.br"];
 
 export async function fetchProductFromUrl(url: string) {
   // get url domain
@@ -20,9 +20,12 @@ export async function fetchProductFromUrl(url: string) {
   switch (domainWithoutWWW) {
     case "oqvestir.com.br":
       // fetch product from oqvestir
-      product = await oqvestirScraper(url, domain, domainWithoutWWW);
+      product = await scraper.oqvestir(url, domain, domainWithoutWWW);
       break;
-
+    case "shop2gether.com.br":
+      // fetch product from oqvestir
+      product = await scraper.shop2gether(url, domain, domainWithoutWWW);
+      break;
     default:
       product = null;
       break;
