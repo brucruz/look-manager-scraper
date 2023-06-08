@@ -1,0 +1,21 @@
+{
+  "name": "@look-manager-scraper/functions",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "sst bind vitest",
+    "typecheck": "tsc -noEmit"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.116",
+    "@types/node": "^20.2.5",
+    "sst": "^2.11.18",
+    "vitest": "^0.32.0"
+  },
+  "dependencies": {
+    "@sparticuz/chromium": "112.0.2",
+    "cheerio": "1.0.0-rc.12",
+    "node-fetch": "^3.3.1",
+    "puppeteer-core": "19.8.0"
+  }
+}
