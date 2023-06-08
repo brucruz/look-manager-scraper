@@ -2,7 +2,6 @@ import chromium from "@sparticuz/chromium";
 import { load } from "cheerio";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer-core";
-import { getDomainWithoutWWW } from "src/utils/getDomainWithoutUrl";
 
 chromium.setHeadlessMode = true;
 chromium.setGraphicsMode = false;
