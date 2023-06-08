@@ -50,36 +50,54 @@ export default async function fetchProduct(
 
     const $ = load(html);
 
-    const name = $(".produt-title--name").text().trim();
-    const sku = $(".product--sku").text().trim();
-    const brand = $(".produt-title--brand a").text().trim();
-    const description = $(".stylesTips .panel-body").text().trim();
+    const productDiv = $(".product-essential");
+
+    const name = productDiv.find(".produt-title--name").text().trim();
+    const sku = productDiv.find(".product--sku").text().trim();
+    const brand = productDiv.find(".produt-title--brand a").text().trim();
+    const description = productDiv
+      .find(".stylesTips .panel-body")
+      .text()
+      .trim();
     const old_price = getNumber(
-      $(".product-price span.price[id^=old]").text().trim()
+      productDiv.find(".product-price span.price[id^=old]").text().trim()
     );
     const price = getNumber(
-      $(".product-price span.price[id^=product]").text().trim()
+      productDiv.find(".product-price span.price[id^=product]").text().trim()
     );
 
     const installment_quantity = parseInt(
-      $(".product-price .product-installment").text().trim().split("x de ")[0]
+      productDiv
+        .find(".product-price .product-installment")
+        .text()
+        .trim()
+        .split("x de ")[0]
     );
 
     const installment_value = getNumber(
-      $(".product-price .product-installment").text().trim().split("x de ")[1]
+      productDiv
+        .find(".product-price .product-installment")
+        .text()
+        .trim()
+        .split("x de ")[1]
     );
 
-    const available = $(".availability").attr("class")
-      ? !$(".availability").attr("class")!.includes("out-of-stock")
+    const available = productDiv.find(".availability").attr("class")
+      ? !productDiv
+          .find(".availability")
+          .attr("class")!
+          .includes("out-of-stock")
       : false;
 
-    const images = $(".slick-cloned img")
+    const images = productDiv
+      .find(".slick-cloned img")
       .map(function () {
         return $(this).attr("src");
       })
       .get();
 
-    const sizes = $("#attribute185 option")
+    const sizes = productDiv
+      .find("#attribute185 option")
       .filter(function () {
         return $(this).attr("data-label") !== undefined;
       })
