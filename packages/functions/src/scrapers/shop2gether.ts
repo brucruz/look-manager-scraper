@@ -1,54 +1,13 @@
-import chromium from "@sparticuz/chromium";
-import { load } from "cheerio";
-import fetch from "node-fetch";
-import puppeteer from "puppeteer-core";
-
-chromium.setHeadlessMode = true;
-chromium.setGraphicsMode = false;
+import { chromiumScraper } from "src/services/chromiumScraper";
+import { ProductInsertion } from "src/types/ProductInsertion";
+import { getPtBrNumber } from "src/utils/getPtBrNumber";
 
 export default async function fetchProduct(
   url: string,
-  domain: string,
   domainWithoutWWW: string
-) {
-  console.log("fetching product from shop2gether");
-
-  // test if url is valid
+): Promise<ProductInsertion> {
   try {
-    const response = await fetch(url);
-
-    if (response.status !== 200) {
-      throw new Error("Product not found");
-    }
-  } catch (error) {
-    throw new Error("Problem connecting to webpage");
-  }
-
-  // Launch a headless browser
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    executablePath: process.env.IS_LOCAL
-      ? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-      : await chromium.executablePath(
-          "/opt/nodejs/node_modules/@sparticuz/chromium/bin"
-        ),
-    defaultViewport: chromium.defaultViewport,
-    headless: chromium.headless,
-  });
-
-  try {
-    // Create a new page
-    const page = await browser.newPage();
-
-    // Navigate to the product page
-    await page.goto(url);
-
-    // get page html
-    const html = await page.content();
-
-    await browser.close();
-
-    const $ = load(html);
+    const $ = await chromiumScraper(url, domainWithoutWWW);
 
     const productDiv = $(".product-essential");
 
@@ -69,12 +28,12 @@ export default async function fetchProduct(
     let price;
 
     if (regularPriceExists) {
-      price = getNumber(regularPrice.text().trim());
+      price = getPtBrNumber(regularPrice.text().trim());
     } else {
-      old_price = getNumber(
+      old_price = getPtBrNumber(
         productDiv.find(".old-price span.price").text().trim()
       );
-      price = getNumber(
+      price = getPtBrNumber(
         productDiv.find(".special-price span.price").text().trim()
       );
     }
@@ -83,7 +42,7 @@ export default async function fetchProduct(
       productDiv.find(".product-installment").text().trim().split("x de ")[0]
     );
 
-    const installment_value = getNumber(
+    const installment_value = getPtBrNumber(
       productDiv.find(".product-installment").text().trim().split("x ")[1]
     );
 
@@ -116,7 +75,7 @@ export default async function fetchProduct(
             errorName: "Size not found",
             store: "oqvestir",
             url: url,
-            domain,
+            domainWithoutWWW,
           });
         }
         return { size, available };
@@ -143,42 +102,6 @@ export default async function fetchProduct(
 
     return product;
   } catch (error: any) {
-    // Handle any errors that occur during crawling
-    await browser.close();
-
     throw new Error(error);
   }
-}
-
-interface DOMPrice {
-  old?: number;
-  new: number;
-  installments: {
-    qty: number;
-    value: number;
-  };
-}
-
-function getNumber(valueString: string) {
-  // get the value as a string, but keep the commas
-  const stringValue = valueString.replace(/[^0-9\,]+/g, "");
-  return parseLocaleNumber(stringValue, "pt-BR");
-}
-
-function parseLocaleNumber(
-  stringNumber: string,
-  locale: string | string[] | undefined
-) {
-  var thousandSeparator = Intl.NumberFormat(locale)
-    .format(11111)
-    .replace(/\p{Number}/gu, "");
-  var decimalSeparator = Intl.NumberFormat(locale)
-    .format(1.1)
-    .replace(/\p{Number}/gu, "");
-
-  return parseFloat(
-    stringNumber
-      .replace(new RegExp("\\" + thousandSeparator, "g"), "")
-      .replace(new RegExp("\\" + decimalSeparator), ".")
-  );
 }
