@@ -29,7 +29,9 @@ export default async function fetchProduct(
     args: chromium.args,
     executablePath: process.env.IS_LOCAL
       ? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-      : await chromium.executablePath(),
+      : await chromium.executablePath(
+          "/opt/nodejs/node_modules/@sparticuz/chromium/bin"
+        ),
     defaultViewport: chromium.defaultViewport,
     headless: chromium.headless,
   });
