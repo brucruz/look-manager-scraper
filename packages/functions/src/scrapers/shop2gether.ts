@@ -78,7 +78,7 @@ export default async function fetchProduct(
             domainWithoutWWW,
           });
         }
-        return { size, available };
+        return { size, available, url };
       })
       .get();
 
