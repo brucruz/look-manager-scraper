@@ -16,7 +16,7 @@ export function API({ stack }: StackContext) {
       "GET /product/web": {
         function: {
           handler: "packages/functions/src/getWebProduct.handler",
-          timeout: 60,
+          timeout: "60 seconds",
           runtime: "nodejs14.x",
           layers: [chromeAwsLayer],
         },
