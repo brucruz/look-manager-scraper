@@ -9,6 +9,7 @@ export interface ProductInsertion {
   brand?: string;
   store: string;
   store_url: string;
+  url: string;
   description?: string;
   old_price?: number;
   price: number;
