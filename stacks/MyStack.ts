@@ -18,6 +18,7 @@ export function API({ stack }: StackContext) {
           handler: "packages/functions/src/getWebProduct.handler",
           timeout: "60 seconds",
           runtime: "nodejs14.x",
+          memorySize: 2048,
           layers: [chromeAwsLayer],
         },
       },
