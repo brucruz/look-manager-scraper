@@ -31,7 +31,7 @@ export default async function fetchProduct(
 
     const name = productDiv.find("h1.product_title").text().trim();
     const sku = variationsForm[0].sku;
-    const brand = "Alaya Brand";
+    const brand = "Alaya";
     const description = productDiv
       .find(".woocommerce-product-details__short-description")
       .find("br")
@@ -79,7 +79,7 @@ export default async function fetchProduct(
       currency: "R$",
       available,
       url,
-      store: "Alaya Brand",
+      store: brand,
       store_url: domainWithoutWWW,
       images,
       sizes,
