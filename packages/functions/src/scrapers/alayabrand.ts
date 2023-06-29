@@ -1,6 +1,5 @@
 import { chromiumScraper } from "src/services/chromiumScraper";
-import { ProductInsertion } from "src/types/ProductInsertion";
-import { getPtBrNumber } from "src/utils/getPtBrNumber";
+import { ScrapeResult } from "src/types/ProductInsertion";
 
 interface Variation {
   attributes: {
@@ -18,7 +17,7 @@ interface Variation {
 export default async function fetchProduct(
   url: string,
   domainWithoutWWW: string
-): Promise<ProductInsertion> {
+): Promise<ScrapeResult> {
   try {
     const $ = await chromiumScraper(url, domainWithoutWWW);
 
@@ -85,7 +84,15 @@ export default async function fetchProduct(
       sizes,
     };
 
-    return product;
+    const related = $(
+      'div[data-widget_type="woocommerce-product-upsell.default"] ul li.product div.woocommerce-image__wrapper a'
+    )
+      .map(function () {
+        return $(this).attr("href");
+      })
+      .get();
+
+    return { product, related };
   } catch (error: any) {
     throw new Error(error);
   }

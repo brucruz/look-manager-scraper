@@ -1,5 +1,5 @@
 import scraper from "./scrapers";
-import { ProductInsertion } from "./types/ProductInsertion";
+import { ScrapeResult } from "./types/ProductInsertion";
 import { getDomainWithoutWWW } from "./utils/getDomainWithoutUrl";
 
 export const supportedDomains = [
@@ -15,26 +15,26 @@ export async function fetchProductFromUrl(url: string) {
     throw new Error("Unsupported domain");
   }
 
-  let product: ProductInsertion | null;
+  let result: ScrapeResult | null;
 
   switch (domainWithoutWWW) {
     case "oqvestir.com.br":
-      product = await scraper.oqvestir(url, domainWithoutWWW);
+      result = await scraper.oqvestir(url, domainWithoutWWW);
       break;
     case "shop2gether.com.br":
-      product = await scraper.shop2gether(url, domainWithoutWWW);
+      result = await scraper.shop2gether(url, domainWithoutWWW);
       break;
     case "alayabrand.com":
-      product = await scraper.alayabrand(url, domainWithoutWWW);
+      result = await scraper.alayabrand(url, domainWithoutWWW);
       break;
     default:
-      product = null;
+      result = null;
       break;
   }
 
-  if (!product) {
+  if (!result?.product) {
     throw new Error("Product not found");
   }
 
-  return product;
+  return result;
 }

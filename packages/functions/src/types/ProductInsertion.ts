@@ -20,3 +20,8 @@ export interface ProductInsertion {
   sizes: Size[];
   images: string[];
 }
+
+export interface ScrapeResult {
+  product: ProductInsertion;
+  related: string[];
+}

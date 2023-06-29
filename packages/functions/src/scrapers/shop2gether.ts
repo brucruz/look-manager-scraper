@@ -1,11 +1,11 @@
 import { chromiumScraper } from "src/services/chromiumScraper";
-import { ProductInsertion } from "src/types/ProductInsertion";
+import { ScrapeResult } from "src/types/ProductInsertion";
 import { getPtBrNumber } from "src/utils/getPtBrNumber";
 
 export default async function fetchProduct(
   url: string,
   domainWithoutWWW: string
-): Promise<ProductInsertion> {
+): Promise<ScrapeResult> {
   try {
     const $ = await chromiumScraper(url, domainWithoutWWW);
 
@@ -100,7 +100,13 @@ export default async function fetchProduct(
       sizes,
     };
 
-    return product;
+    const related = $("div.box-related li a.product-image")
+      .map(function () {
+        return $(this).attr("href");
+      })
+      .get();
+
+    return { product, related };
   } catch (error: any) {
     throw new Error(error);
   }

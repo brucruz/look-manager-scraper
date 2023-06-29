@@ -23,10 +23,10 @@ export const handler = apiLambdaRawHandler(
       };
     }
 
-    let product;
+    let result;
 
     try {
-      product = await fetchProductFromUrl(productUrl);
+      result = await fetchProductFromUrl(productUrl);
     } catch (error) {
       return {
         statusCode: 400,
@@ -38,7 +38,7 @@ export const handler = apiLambdaRawHandler(
 
     return {
       statusCode: 200,
-      body: JSON.stringify(product),
+      body: JSON.stringify(result),
       headers: {
         "content-type": "application/json",
       },
