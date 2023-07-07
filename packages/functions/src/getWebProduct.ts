@@ -23,10 +23,16 @@ export const handler = apiLambdaRawHandler(
       };
     }
 
-    let result;
-
     try {
-      result = await fetchProductFromUrl(productUrl);
+      const result = await fetchProductFromUrl(productUrl);
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify(result),
+        headers: {
+          "content-type": "application/json",
+        },
+      };
     } catch (error) {
       return {
         statusCode: 400,
@@ -35,13 +41,5 @@ export const handler = apiLambdaRawHandler(
         }),
       };
     }
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(result),
-      headers: {
-        "content-type": "application/json",
-      },
-    };
   }
 );
