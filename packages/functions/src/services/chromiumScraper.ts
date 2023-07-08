@@ -11,7 +11,14 @@ export async function chromiumScraper(url: string, domainWithoutWWW: string) {
 
   // test if url is valid
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
+          "(KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
+      },
+    });
 
     if (response.status !== 200) {
       throw new Error("Product not found");
@@ -37,7 +44,9 @@ export async function chromiumScraper(url: string, domainWithoutWWW: string) {
     const page = await browser.newPage();
 
     // Navigate to the product page
-    await page.goto(url);
+    await page.goto(url, {
+      waitUntil: "domcontentloaded",
+    });
 
     // get page html
     const html = await page.content();
