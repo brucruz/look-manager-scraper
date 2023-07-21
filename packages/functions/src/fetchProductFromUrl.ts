@@ -28,9 +28,9 @@ export async function fetchProductFromUrl(url: string) {
     case "shop2gether.com.br":
       result = await scraper.shop2gether(url, domainWithoutWWW);
       break;
-    case "alayabrand.com":
-      result = await scraper.alayabrand(url, domainWithoutWWW);
-      break;
+    // case "alayabrand.com":
+    //   result = await scraper.alayabrand(url, domainWithoutWWW);
+    //   break;
     default:
       result = null;
       break;
