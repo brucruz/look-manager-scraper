@@ -12,7 +12,14 @@ export default async function fetchProduct(
     const productDiv = $(".product-essential");
 
     const name = productDiv.find(".produt-title--name").text().trim();
+    const variantFullName = name;
+    const productName = name.split(" - ")[0];
+    const variantTitle = name.split(" - ")[1];
+
     const sku = productDiv.find(".product--sku").text().trim();
+    const productSku = sku.split("_")[0];
+    const variantSku = sku;
+
     const brand = productDiv.find(".produt-title--brand a").text().trim();
 
     const descriptionText = productDiv.find(".descPrincipal .panel-body p");
@@ -93,10 +100,38 @@ export default async function fetchProduct(
       })
       .get();
 
+    const breadcrumbList = $("div.breadcrumb-wrapper li")
+      .not(":first")
+      .map(function () {
+        return $(this).text().trim();
+      })
+      .get();
+
+    const listToCheckGender = [productName, ...breadcrumbList, description];
+
+    // go through listToCheckGender and try to match 'feminin' or 'masculin'
+    const isFemale = listToCheckGender.some((text) =>
+      text.toLowerCase().includes("feminin")
+    );
+    const isMale = listToCheckGender.some((text) =>
+      text.toLowerCase().includes("masculin")
+    );
+
+    const gender = isFemale ? "female" : isMale ? "male" : undefined;
+
     const product = {
-      name,
-      sku,
+      name: productName,
+      sku: productSku,
       brand,
+      store: "OQVestir",
+      store_url: domainWithoutWWW,
+      gender,
+    };
+
+    const variant = {
+      title: variantTitle,
+      full_name: variantFullName,
+      sku: variantSku,
       description,
       old_price,
       price,
@@ -105,20 +140,27 @@ export default async function fetchProduct(
       installment_quantity,
       available,
       url,
-      store: "OQVestir",
-      store_url: domainWithoutWWW,
       images,
       sizes,
     };
 
-    const related = $("div.box-related li a.product-image")
+    const suggested = $("div.box-related li a.product-image")
       .map(function () {
         return $(this).attr("href");
       })
       .get();
 
+    const otherVariants = $("div.box-collateral li a.product-image")
+      .map(function () {
+        return $(this).attr("href");
+      })
+      .get();
+
+    const related = [...suggested, ...otherVariants];
+
     return {
       product,
+      variants: [variant],
       related,
     };
   } catch (error: any) {
