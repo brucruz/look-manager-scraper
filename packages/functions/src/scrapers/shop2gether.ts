@@ -12,12 +12,20 @@ export default async function fetchProduct(
     const productDiv = $(".product-essential");
 
     const name = productDiv.find(".product-name span.h1").text().trim();
+    const variantFullName = name;
+    const productName = name.split(" - ")[0];
+    const variantTitle = name.split(" - ")[1];
+
     const sku = productDiv.find(".product-name p.new-sku-style").text().trim();
+    const productSku = sku.split("_")[0];
+    const variantSku = sku;
+
     const brand = productDiv.find(".product-brand a").text().trim();
-    const description = productDiv
-      .find(".new-product-tabs-desc-content")
-      .text()
-      .trim();
+
+    const descriptionText = productDiv.find(".new-product-tabs-desc-content");
+    // replace breaks with new lines (\n)
+    descriptionText.find("br").replaceWith("\n");
+    const description = descriptionText.text().trim();
 
     const regularPrice = productDiv.find(".regular-price span.price");
 
@@ -82,10 +90,38 @@ export default async function fetchProduct(
       })
       .get();
 
+    const breadcrumbList = $("div.breadcrumbs ul li")
+      .not(":first")
+      .map(function () {
+        return $(this).text().trim();
+      })
+      .get();
+
+    const listToCheckGender = [productName, ...breadcrumbList, description];
+
+    // go through listToCheckGender and try to match 'feminin' or 'masculin'
+    const isFemale = listToCheckGender.some((text) =>
+      text.toLowerCase().includes("feminin")
+    );
+    const isMale = listToCheckGender.some((text) =>
+      text.toLowerCase().includes("masculin")
+    );
+
+    const gender = isFemale ? "female" : isMale ? "male" : undefined;
+
     const product = {
-      name,
-      sku,
+      name: productName,
+      sku: productSku,
       brand,
+      store: "Shop2gether",
+      store_url: domainWithoutWWW,
+      gender,
+    };
+
+    const variant = {
+      title: variantTitle,
+      full_name: variantFullName,
+      sku: variantSku,
       description,
       old_price,
       price,
@@ -94,19 +130,31 @@ export default async function fetchProduct(
       installment_quantity,
       available,
       url,
-      store: "Shop2gether",
-      store_url: domainWithoutWWW,
       images,
       sizes,
     };
 
-    const related = $("div.box-related li a.product-image")
+    const suggested = $("div.box-related li a.product-image")
       .map(function () {
         return $(this).attr("href");
       })
       .get();
 
-    return { product, related };
+    const upsell = $("div.box-up-sell li a.product-image")
+      .map(function () {
+        return $(this).attr("href");
+      })
+      .get();
+
+    const otherVariants = $("div.box-crosssell li a.product-image")
+      .map(function () {
+        return $(this).attr("href");
+      })
+      .get();
+
+    const related = [...suggested, ...upsell, ...otherVariants];
+
+    return { product, variants: [variant], related };
   } catch (error: any) {
     throw new Error(error);
   }
