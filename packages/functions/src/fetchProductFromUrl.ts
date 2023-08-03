@@ -1,6 +1,7 @@
 import scraper from "./scrapers";
 import { ScrapeResult } from "./types/ProductInsertion";
 import { getDomainWithoutWWW } from "./utils/getDomainWithoutUrl";
+import AppError from "./errors/AppError";
 
 export const supportedDomains = [
   "zara.com",
@@ -13,7 +14,7 @@ export async function fetchProductFromUrl(url: string) {
   const domainWithoutWWW = getDomainWithoutWWW(url);
 
   if (!supportedDomains.includes(domainWithoutWWW)) {
-    throw new Error("Unsupported domain");
+    throw new AppError("Unsupported domain", 404);
   }
 
   let result: ScrapeResult | null;
@@ -37,7 +38,7 @@ export async function fetchProductFromUrl(url: string) {
   }
 
   if (!result?.product) {
-    throw new Error("Product not found");
+    throw new AppError("Product not found", 404);
   }
 
   return result;

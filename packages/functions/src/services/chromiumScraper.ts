@@ -2,6 +2,7 @@ import chromium from "@sparticuz/chromium";
 import { load } from "cheerio";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer-core";
+import AppError from "../errors/AppError";
 
 chromium.setHeadlessMode = true;
 chromium.setGraphicsMode = false;
@@ -21,10 +22,13 @@ export async function chromiumScraper(url: string, domainWithoutWWW: string) {
     });
 
     if (response.status !== 200) {
-      throw new Error("Product not found");
+      throw new AppError("Product not found", response.status);
     }
-  } catch (error) {
-    throw new Error("Problem connecting to webpage");
+  } catch (error: any) {
+    throw new AppError(
+      `Problem connecting to webpage: ${error.message}`,
+      error.statusCode
+    );
   }
 
   // Launch a headless browser
@@ -60,6 +64,6 @@ export async function chromiumScraper(url: string, domainWithoutWWW: string) {
     // Handle any errors that occur during crawling
     await browser.close();
 
-    throw new Error(error);
+    throw new AppError(error.message, error.statusCode);
   }
 }

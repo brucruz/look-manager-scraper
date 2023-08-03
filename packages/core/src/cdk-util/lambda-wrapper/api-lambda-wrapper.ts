@@ -8,6 +8,7 @@ import {
 import * as t from "io-ts";
 import { PathReporter } from "io-ts/PathReporter";
 import * as E from "fp-ts/lib/Either";
+import AppError from "@look-manager-scraper/functions/src/errors/AppError";
 // import { extractUserData } from '../../util/extract-user-data';
 // import { UserData } from '../../util/user-data';
 
@@ -23,7 +24,7 @@ export const apiLambdaHandler = <I extends t.TypeC<any>, R, ENV>(
       const input: any = JSON.parse(event.body || "{}");
       const parsedInput = type.decode(input);
       if (E.isLeft(parsedInput)) {
-        throw new Error(
+        throw new AppError(
           `Input validation failed: ${PathReporter.report(parsedInput)}`
         );
       }
@@ -117,13 +118,14 @@ export const apiLambdaRawHandler = <ENV>(
           errorName: err.name,
           errorMessage: err.message,
           errorStack: err.stack,
+          statusCode: err.statusCode,
           input: event.body,
           headers: event.headers,
         })
       );
       return {
         body: JSON.stringify({ error: err.message }),
-        statusCode: 500,
+        statusCode: err.statusCode || 500,
       };
     }
   };

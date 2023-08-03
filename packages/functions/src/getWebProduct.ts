@@ -1,7 +1,7 @@
 import * as t from "io-ts";
-// import { ApiHandler } from "sst/node/api";
 import { apiLambdaRawHandler } from "@look-manager-scraper/core/src/cdk-util/lambda-wrapper/api-lambda-wrapper";
 import { fetchProductFromUrl } from "./fetchProductFromUrl";
+import AppError from "@look-manager-scraper/functions/src/errors/AppError";
 
 export type GetWebProductEnv = {};
 
@@ -33,13 +33,8 @@ export const handler = apiLambdaRawHandler(
           "content-type": "application/json",
         },
       };
-    } catch (error) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          error: (error as any).message,
-        }),
-      };
+    } catch (error: any) {
+      throw new AppError(error.message, error.statusCode);
     }
   }
 );

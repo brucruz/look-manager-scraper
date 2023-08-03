@@ -1,6 +1,7 @@
 import { chromiumScraper } from "src/services/chromiumScraper";
 import { ScrapeResult } from "src/types/ProductInsertion";
 import { getPtBrNumber } from "src/utils/getPtBrNumber";
+import AppError from "../errors/AppError";
 
 export default async function fetchProduct(
   url: string,
@@ -156,6 +157,6 @@ export default async function fetchProduct(
 
     return { product, variants: [variant], related };
   } catch (error: any) {
-    throw new Error(error);
+    throw new AppError(error.message, error.statusCode);
   }
 }

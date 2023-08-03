@@ -1,6 +1,7 @@
 import { chromiumScraper } from "src/services/chromiumScraper";
 import { ScrapeResult } from "src/types/ProductInsertion";
 import { getPtBrNumber } from "src/utils/getPtBrNumber";
+import AppError from "../errors/AppError";
 
 interface Variation {
   sku: string;
@@ -93,6 +94,6 @@ export default async function fetchProduct(
 
     return { product, related };
   } catch (error: any) {
-    throw new Error(error);
+    throw new AppError(error.message, error.statusCode);
   }
 }
