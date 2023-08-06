@@ -73,7 +73,7 @@ export default async function fetchProduct(
       : false;
 
     const images = productDiv
-      .find(".slick-cloned img")
+      .find(".slider-for .slick-track .slick-slide li img.img-zoom")
       .map(function () {
         return $(this).attr("src");
       })
